@@ -1,13 +1,9 @@
 extern crate csv;
-
 use std::collections::HashSet;
 use std::error::Error;
 use std::fs::File;
-use std::path::Path;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let csv_file_path = "./all_stocks_5yr.csv";
-    let column_index = 6;
+fn extract_unique_column_values(csv_file_path: &str, column_index: usize) -> Result<HashSet<String>, Box<dyn Error>> {
     let file = File::open(csv_file_path)?;
     let mut rdr = csv::Reader::from_reader(file);
     let mut unique_strings = HashSet::new();
@@ -19,8 +15,17 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    for unique_string in &unique_strings {
-        println!("{}", unique_string);
+    Ok(unique_strings)
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let csv_file_path = "./all_stocks_5yr.csv";
+    let column_index = 6;
+
+    if let Ok(unique_values) = extract_unique_column_values(csv_file_path, column_index) {
+        for value in unique_values {
+            println!("{}", value);
+        }
     }
 
     Ok(())
